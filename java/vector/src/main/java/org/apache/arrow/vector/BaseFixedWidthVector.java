@@ -156,15 +156,9 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
    */
   @Override
   public int getValueCapacity() {
-    return Math.min(getValueBufferValueCapacity(), getValidityBufferValueCapacity());
-  }
-
-  private int getValueBufferValueCapacity() {
-    return valueBuffer.capacity() / typeWidth;
-  }
-
-  private int getValidityBufferValueCapacity() {
-    return validityBuffer.capacity() * 8;
+    final int validityBufferCapacity = (int) (getValidityBufferCapacity() * 8L);
+    final int valueBufferCapacity = (int) ((valueBuffer.capacity() * 1.0) / typeWidth);
+    return Math.min(valueBufferCapacity, validityBufferCapacity);
   }
 
   /**
@@ -174,11 +168,6 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
   public void zeroVector() {
     initValidityBuffer();
     initValueBuffer();
-  }
-
-  /* zero out the validity buffer */
-  private void initValidityBuffer() {
-    validityBuffer.setZero(0, validityBuffer.capacity());
   }
 
   /* zero out the data buffer */
@@ -210,7 +199,7 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
   @Override
   public void clear() {
     valueCount = 0;
-    validityBuffer = releaseBuffer(validityBuffer);
+    clearValidityBuffer();
     valueBuffer = releaseBuffer(valueBuffer);
   }
 
@@ -399,10 +388,7 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
     valueBuffer = newValueBuffer;
 
     final ArrowBuf newValidityBuffer = buffers.getValidityBuf();
-    newValidityBuffer.setBytes(0, validityBuffer, 0, validityBuffer.capacity());
-    newValidityBuffer.setZero(validityBuffer.capacity(), newValidityBuffer.capacity() - validityBuffer.capacity());
-    validityBuffer.getReferenceManager().release();
-    validityBuffer = newValidityBuffer;
+    reallocValidityBuffer(newValidityBuffer);
 
     lastValueCapacity = getValueCapacity();
   }

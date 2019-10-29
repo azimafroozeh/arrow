@@ -208,11 +208,6 @@ public abstract class BaseVariableWidthVector extends BaseValueVector
     valueBuffer.setZero(0, valueBuffer.capacity());
   }
 
-  /* zero out the validity buffer */
-  private void initValidityBuffer() {
-    validityBuffer.setZero(0, validityBuffer.capacity());
-  }
-
   /* zero out the offset buffer */
   private void initOffsetBuffer() {
     offsetBuffer.setZero(0, offsetBuffer.capacity());
@@ -522,10 +517,7 @@ public abstract class BaseVariableWidthVector extends BaseValueVector
     offsetBuffer = newOffsetBuffer;
 
     final ArrowBuf newValidityBuffer = buffers.getValidityBuf();
-    newValidityBuffer.setBytes(0, validityBuffer, 0, validityBuffer.capacity());
-    newValidityBuffer.setZero(validityBuffer.capacity(), newValidityBuffer.capacity() - validityBuffer.capacity());
-    validityBuffer.getReferenceManager().release();
-    validityBuffer = newValidityBuffer;
+    reallocValidityBuffer(newValidityBuffer);
 
     lastValueCapacity = getValueCapacity();
   }

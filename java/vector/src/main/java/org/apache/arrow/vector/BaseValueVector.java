@@ -170,8 +170,26 @@ public abstract class BaseValueVector implements ValueVector {
     return validityBuffer;
   }
 
+  public void setValidityBuffer(ArrowBuf validityBuffer) {
+    this.validityBuffer.getReferenceManager().release();
+    this.validityBuffer = validityBuffer;
+  }
+
+  public int getValidityBufferCapacity() {
+    return this.validityBuffer.capacity();
+  }
+
   public void transferValidityBuffer(BaseValueVector target) {
     target.validityBuffer = transferBuffer(validityBuffer, target.allocator);
+  }
+
+  /* zero out the validity buffer */
+  public void initValidityBuffer() {
+    validityBuffer.setZero(0, validityBuffer.capacity());
+  }
+
+  public void clearValidityBuffer() {
+    this.validityBuffer = releaseBuffer(validityBuffer);
   }
 
   /* reallocate the validity buffer */
@@ -197,6 +215,13 @@ public abstract class BaseValueVector implements ValueVector {
     validityBuffer.getReferenceManager().release(1);
     validityBuffer = newBuf;
     validityAllocationSizeInBytes = (int) newAllocationSize;
+  }
+
+  protected void reallocValidityBuffer(ArrowBuf newValidityBuffer) {
+    newValidityBuffer.setBytes(0, validityBuffer, 0, validityBuffer.capacity());
+    newValidityBuffer.setZero(validityBuffer.capacity(), newValidityBuffer.capacity() - validityBuffer.capacity());
+    validityBuffer.getReferenceManager().release();
+    validityBuffer = newValidityBuffer;
   }
 
   protected ArrowBuf releaseBuffer(ArrowBuf buffer) {
