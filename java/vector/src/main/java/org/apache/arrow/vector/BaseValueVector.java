@@ -27,6 +27,7 @@ import org.apache.arrow.memory.ReferenceManager;
 import org.apache.arrow.util.DataSizeRoundingUtil;
 import org.apache.arrow.util.Preconditions;
 import org.apache.arrow.vector.ipc.message.ArrowFieldNode;
+import org.apache.arrow.vector.util.OversizedAllocationException;
 import org.apache.arrow.vector.util.TransferPair;
 import org.apache.arrow.vector.util.ValueVectorUtility;
 import org.slf4j.Logger;
@@ -54,10 +55,12 @@ public abstract class BaseValueVector implements ValueVector {
 
   protected final BufferAllocator allocator;
   protected ArrowBuf validityBuffer;
+  protected int validityAllocationSizeInBytes;
 
   protected BaseValueVector(BufferAllocator allocator) {
-    this.validityBuffer = validityBuffer = allocator.getEmpty();
+    this.validityBuffer = allocator.getEmpty();
     this.allocator = Preconditions.checkNotNull(allocator, "allocator cannot be null");
+    this.validityAllocationSizeInBytes = getValidityBufferSizeFromCount(INITIAL_VALUE_ALLOCATION);
   }
 
   @Override
@@ -131,6 +134,46 @@ public abstract class BaseValueVector implements ValueVector {
 
   public void setValidityBufferWriterIndex(int index) {
     validityBuffer.writerIndex(index);
+  }
+
+
+  /**
+   * During splitAndTransfer, if we splitting from a random position within a byte,
+   * we can't just slice the source buffer so we have to explicitly allocate the
+   * validityBuffer of the target vector. This is unlike the databuffer which we can
+   * always slice for the target vector.
+   */
+  public void allocateValidityBuffer(final long size) {
+    final int curSize = (int) size;
+    validityBuffer = allocator.buffer(curSize);
+    validityBuffer.readerIndex(0);
+    validityAllocationSizeInBytes = curSize;
+    validityBuffer.setZero(0, validityBuffer.capacity());
+  }
+
+  /* reallocate the validity buffer */
+  protected void reallocValidityBuffer() {
+    final int currentBufferCapacity = validityBuffer.capacity();
+    long baseSize = validityAllocationSizeInBytes;
+
+    if (baseSize < (long) currentBufferCapacity) {
+      baseSize = (long) currentBufferCapacity;
+    }
+
+    long newAllocationSize = baseSize * 2L;
+    newAllocationSize = BaseAllocator.nextPowerOfTwo(newAllocationSize);
+    assert newAllocationSize >= 1;
+
+    if (newAllocationSize > MAX_ALLOCATION_SIZE) {
+      throw new OversizedAllocationException("Unable to expand the buffer");
+    }
+
+    final ArrowBuf newBuf = allocator.buffer((int) newAllocationSize);
+    newBuf.setBytes(0, validityBuffer, 0, currentBufferCapacity);
+    newBuf.setZero(currentBufferCapacity, newBuf.capacity() - currentBufferCapacity);
+    validityBuffer.getReferenceManager().release(1);
+    validityBuffer = newBuf;
+    validityAllocationSizeInBytes = (int) newAllocationSize;
   }
 
   protected ArrowBuf releaseBuffer(ArrowBuf buffer) {

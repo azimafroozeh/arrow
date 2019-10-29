@@ -330,17 +330,6 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
   }
 
   /**
-   * During splitAndTransfer, if we splitting from a random position within a byte,
-   * we can't just slice the source buffer so we have to explicitly allocate the
-   * validityBuffer of the target vector. This is unlike the databuffer which we can
-   * always slice for the target vector.
-   */
-  private void allocateValidityBuffer(final int validityBufferSize) {
-    validityBuffer = allocator.buffer(validityBufferSize);
-    validityBuffer.readerIndex(0);
-  }
-
-  /**
    * Get the potential buffer size for a particular number of records.
    * @param count desired number of elements in the vector
    * @return estimated size of underlying buffers if the vector holds

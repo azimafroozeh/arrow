@@ -462,14 +462,6 @@ public abstract class BaseVariableWidthVector extends BaseValueVector
     initOffsetBuffer();
   }
 
-  /* allocate validity buffer */
-  private void allocateValidityBuffer(final long size) {
-    final int curSize = (int) size;
-    validityBuffer = allocator.buffer(curSize);
-    validityBuffer.readerIndex(0);
-    initValidityBuffer();
-  }
-
   /**
    * Resize the vector to increase the capacity. The internal behavior is to
    * double the current value capacity.
