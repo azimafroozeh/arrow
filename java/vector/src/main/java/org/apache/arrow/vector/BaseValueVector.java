@@ -151,6 +151,25 @@ public abstract class BaseValueVector implements ValueVector {
     validityBuffer.setZero(0, validityBuffer.capacity());
   }
 
+  /**
+   * Get the memory address of buffer that manages the validity
+   * (NULL or NON-NULL nature) of elements in the vector.
+   * @return starting address of the buffer
+   */
+  public long getValidityBufferAddress() {
+    return (validityBuffer.memoryAddress());
+  }
+
+  /**
+   * Get buffer that manages the validity (NULL or NON-NULL nature) of
+   * elements in the vector. Consider it as a buffer for internal bit vector
+   * data structure.
+   * @return buffer
+   */
+  public ArrowBuf getValidityBuffer() {
+    return validityBuffer;
+  }
+
   /* reallocate the validity buffer */
   protected void reallocValidityBuffer() {
     final int currentBufferCapacity = validityBuffer.capacity();

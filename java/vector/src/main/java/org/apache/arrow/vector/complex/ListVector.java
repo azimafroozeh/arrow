@@ -352,11 +352,6 @@ public class ListVector extends BaseRepeatedValueVector implements PromotableVec
   }
 
   @Override
-  public long getValidityBufferAddress() {
-    return (validityBuffer.memoryAddress());
-  }
-
-  @Override
   public long getDataBufferAddress() {
     throw new UnsupportedOperationException();
   }
@@ -364,11 +359,6 @@ public class ListVector extends BaseRepeatedValueVector implements PromotableVec
   @Override
   public long getOffsetBufferAddress() {
     return (offsetBuffer.memoryAddress());
-  }
-
-  @Override
-  public ArrowBuf getValidityBuffer() {
-    return validityBuffer;
   }
 
   @Override

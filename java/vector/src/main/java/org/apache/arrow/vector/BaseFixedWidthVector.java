@@ -99,16 +99,6 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
    */
 
   /**
-   * Get the memory address of buffer that manages the validity
-   * (NULL or NON-NULL nature) of elements in the vector.
-   * @return starting address of the buffer
-   */
-  @Override
-  public long getValidityBufferAddress() {
-    return (validityBuffer.memoryAddress());
-  }
-
-  /**
    * Get the memory address of buffer that stores the data for elements
    * in the vector.
    * @return starting address of the buffer
@@ -127,17 +117,6 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
   @Override
   public long getOffsetBufferAddress() {
     throw new UnsupportedOperationException("not supported for fixed-width vectors");
-  }
-
-  /**
-   * Get buffer that manages the validity (NULL or NON-NULL nature) of
-   * elements in the vector. Consider it as a buffer for internal bit vector
-   * data structure.
-   * @return buffer
-   */
-  @Override
-  public ArrowBuf getValidityBuffer() {
-    return validityBuffer;
   }
 
   /**
