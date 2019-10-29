@@ -19,6 +19,7 @@ package org.apache.arrow.vector;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.arrow.memory.BaseAllocator;
 import org.apache.arrow.memory.BufferAllocator;
@@ -118,6 +119,10 @@ public abstract class BaseValueVector implements ValueVector {
   public void loadValidityBuffer(final ArrowFieldNode fieldNode, ArrowBuf bitBuffer) {
     validityBuffer.getReferenceManager().release();
     validityBuffer = bitBuffer.getReferenceManager().retain(bitBuffer, allocator);
+  }
+
+  public void add(List<ArrowBuf> list) {
+    list.add(validityBuffer);
   }
 
   protected ArrowBuf releaseBuffer(ArrowBuf buffer) {
