@@ -534,7 +534,7 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
     Preconditions.checkArgument(startIndex + length <= valueCount);
     compareTypes(target, "splitAndTransferTo");
     target.clear();
-    splitAndTransferValidityBuffer(startIndex, length, target);
+    splitAndTransferValidityBuffer(startIndex, length, valueCount, target);
     splitAndTransferValueBuffer(startIndex, length, target);
     target.setValueCount(length);
   }
@@ -548,68 +548,6 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
     final int sliceLength = length * typeWidth;
     final ArrowBuf slicedBuffer = valueBuffer.slice(startPoint, sliceLength);
     target.valueBuffer = transferBuffer(slicedBuffer, target.allocator);
-  }
-
-  /**
-   * Validity buffer has multiple cases of split and transfer depending on
-   * the starting position of the source index.
-   */
-  private void splitAndTransferValidityBuffer(int startIndex, int length,
-                                              BaseFixedWidthVector target) {
-    int firstByteSource = BitVectorHelper.byteIndex(startIndex);
-    int lastByteSource = BitVectorHelper.byteIndex(valueCount - 1);
-    int byteSizeTarget = getValidityBufferSizeFromCount(length);
-    int offset = startIndex % 8;
-
-    if (length > 0) {
-      if (offset == 0) {
-        /* slice */
-        if (target.validityBuffer != null) {
-          target.validityBuffer.getReferenceManager().release();
-        }
-        target.validityBuffer = validityBuffer.slice(firstByteSource, byteSizeTarget);
-        target.validityBuffer.getReferenceManager().retain(1);
-      } else {
-        /* Copy data
-         * When the first bit starts from the middle of a byte (offset != 0),
-         * copy data from src BitVector.
-         * Each byte in the target is composed by a part in i-th byte,
-         * another part in (i+1)-th byte.
-         */
-        target.allocateValidityBuffer(byteSizeTarget);
-
-        for (int i = 0; i < byteSizeTarget - 1; i++) {
-          byte b1 = BitVectorHelper.getBitsFromCurrentByte(this.validityBuffer,
-                  firstByteSource + i, offset);
-          byte b2 = BitVectorHelper.getBitsFromNextByte(this.validityBuffer,
-                  firstByteSource + i + 1, offset);
-
-          target.validityBuffer.setByte(i, (b1 + b2));
-        }
-
-        /* Copying the last piece is done in the following manner:
-         * if the source vector has 1 or more bytes remaining, we copy
-         * the last piece as a byte formed by shifting data
-         * from the current byte and the next byte.
-         *
-         * if the source vector has no more bytes remaining
-         * (we are at the last byte), we copy the last piece as a byte
-         * by shifting data from the current byte.
-         */
-        if ((firstByteSource + byteSizeTarget - 1) < lastByteSource) {
-          byte b1 = BitVectorHelper.getBitsFromCurrentByte(this.validityBuffer,
-                  firstByteSource + byteSizeTarget - 1, offset);
-          byte b2 = BitVectorHelper.getBitsFromNextByte(this.validityBuffer,
-                  firstByteSource + byteSizeTarget, offset);
-
-          target.validityBuffer.setByte(byteSizeTarget - 1, b1 + b2);
-        } else {
-          byte b1 = BitVectorHelper.getBitsFromCurrentByte(this.validityBuffer,
-                  firstByteSource + byteSizeTarget - 1, offset);
-          target.validityBuffer.setByte(byteSizeTarget - 1, b1);
-        }
-      }
-    }
   }
 
 
