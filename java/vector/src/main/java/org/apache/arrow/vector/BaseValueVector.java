@@ -51,8 +51,10 @@ public abstract class BaseValueVector implements ValueVector {
   public static final int INITIAL_VALUE_ALLOCATION = 3970;
 
   protected final BufferAllocator allocator;
+  protected ArrowBuf validityBuffer;
 
   protected BaseValueVector(BufferAllocator allocator) {
+    this.validityBuffer = validityBuffer = allocator.getEmpty();
     this.allocator = Preconditions.checkNotNull(allocator, "allocator cannot be null");
   }
 

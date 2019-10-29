@@ -50,7 +50,6 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
 
   protected final Field field;
   private int allocationMonitor;
-  protected ArrowBuf validityBuffer;
   protected ArrowBuf valueBuffer;
   protected int valueCount;
 
@@ -67,7 +66,6 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
     this.field = field;
     valueCount = 0;
     allocationMonitor = 0;
-    validityBuffer = allocator.getEmpty();
     valueBuffer = allocator.getEmpty();
     lastValueCapacity = INITIAL_VALUE_ALLOCATION;
   }

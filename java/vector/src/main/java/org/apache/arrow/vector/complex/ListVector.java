@@ -71,7 +71,6 @@ public class ListVector extends BaseRepeatedValueVector implements PromotableVec
     return new ListVector(name, allocator, FieldType.nullable(ArrowType.List.INSTANCE), null);
   }
 
-  protected ArrowBuf validityBuffer;
   protected UnionListReader reader;
   private CallBack callBack;
   private final FieldType fieldType;
@@ -108,7 +107,6 @@ public class ListVector extends BaseRepeatedValueVector implements PromotableVec
    */
   public ListVector(String name, BufferAllocator allocator, FieldType fieldType, CallBack callBack) {
     super(name, allocator, callBack);
-    this.validityBuffer = allocator.getEmpty();
     this.fieldType = checkNotNull(fieldType);
     this.callBack = callBack;
     this.validityAllocationSizeInBytes = getValidityBufferSizeFromCount(INITIAL_VALUE_ALLOCATION);

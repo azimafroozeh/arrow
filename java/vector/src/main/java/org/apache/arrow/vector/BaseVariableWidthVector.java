@@ -52,7 +52,6 @@ public abstract class BaseVariableWidthVector extends BaseValueVector
   /* protected members */
   public static final int OFFSET_WIDTH = 4; /* 4 byte unsigned int to track offsets */
   protected static final byte[] emptyByteArray = new byte[]{};
-  protected ArrowBuf validityBuffer;
   protected ArrowBuf valueBuffer;
   protected ArrowBuf offsetBuffer;
   protected int valueCount;
@@ -74,7 +73,6 @@ public abstract class BaseVariableWidthVector extends BaseValueVector
     valueCount = 0;
     lastSet = -1;
     offsetBuffer = allocator.getEmpty();
-    validityBuffer = allocator.getEmpty();
     valueBuffer = allocator.getEmpty();
   }
 
