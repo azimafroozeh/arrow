@@ -125,6 +125,14 @@ public abstract class BaseValueVector implements ValueVector {
     list.add(validityBuffer);
   }
 
+  public void setValidityBufferReaderIndex(int index) {
+    validityBuffer.readerIndex(index);
+  }
+
+  public void setValidityBufferWriterIndex(int index) {
+    validityBuffer.writerIndex(index);
+  }
+
   protected ArrowBuf releaseBuffer(ArrowBuf buffer) {
     buffer.getReferenceManager().release();
     buffer = allocator.getEmpty();

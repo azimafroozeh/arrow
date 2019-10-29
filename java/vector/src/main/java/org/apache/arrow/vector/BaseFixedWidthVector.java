@@ -507,13 +507,13 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
    * Set the reader and writer indexes for the inner buffers.
    */
   private void setReaderAndWriterIndex() {
-    validityBuffer.readerIndex(0);
+    setValidityBufferReaderIndex(0);
     valueBuffer.readerIndex(0);
     if (valueCount == 0) {
-      validityBuffer.writerIndex(0);
+      setValidityBufferWriterIndex(0);
       valueBuffer.writerIndex(0);
     } else {
-      validityBuffer.writerIndex(getValidityBufferSizeFromCount(valueCount));
+      setValidityBufferWriterIndex(getValidityBufferSizeFromCount(valueCount));
       if (typeWidth == 0) {
         /* specialized handling for BitVector */
         valueBuffer.writerIndex(getValidityBufferSizeFromCount(valueCount));

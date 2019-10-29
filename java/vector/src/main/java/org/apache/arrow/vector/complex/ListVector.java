@@ -227,13 +227,13 @@ public class ListVector extends BaseRepeatedValueVector implements PromotableVec
    * Set the reader and writer indexes for the inner buffers.
    */
   private void setReaderAndWriterIndex() {
-    validityBuffer.readerIndex(0);
+    setValidityBufferReaderIndex(0);
     offsetBuffer.readerIndex(0);
     if (valueCount == 0) {
-      validityBuffer.writerIndex(0);
+      setValidityBufferWriterIndex(0);
       offsetBuffer.writerIndex(0);
     } else {
-      validityBuffer.writerIndex(getValidityBufferSizeFromCount(valueCount));
+      setValidityBufferWriterIndex(getValidityBufferSizeFromCount(valueCount));
       offsetBuffer.writerIndex((valueCount + 1) * OFFSET_WIDTH);
     }
   }
