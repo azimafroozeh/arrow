@@ -197,8 +197,8 @@ public class ListVector extends BaseRepeatedValueVector implements PromotableVec
     ArrowBuf bitBuffer = ownBuffers.get(0);
     ArrowBuf offBuffer = ownBuffers.get(1);
 
-    validityBuffer.getReferenceManager().release();
-    validityBuffer = BitVectorHelper.loadValidityBuffer(fieldNode, bitBuffer, allocator);
+
+    loadValidityBuffer(fieldNode, bitBuffer);
     offsetBuffer.getReferenceManager().release();
     offsetBuffer = offBuffer.getReferenceManager().retain(offBuffer, allocator);
 

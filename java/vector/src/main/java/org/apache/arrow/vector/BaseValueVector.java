@@ -25,6 +25,7 @@ import org.apache.arrow.memory.BufferAllocator;
 import org.apache.arrow.memory.ReferenceManager;
 import org.apache.arrow.util.DataSizeRoundingUtil;
 import org.apache.arrow.util.Preconditions;
+import org.apache.arrow.vector.ipc.message.ArrowFieldNode;
 import org.apache.arrow.vector.util.TransferPair;
 import org.apache.arrow.vector.util.ValueVectorUtility;
 import org.slf4j.Logger;
@@ -112,6 +113,11 @@ public abstract class BaseValueVector implements ValueVector {
     if (this.getMinorType() != target.getMinorType()) {
       throw new UnsupportedOperationException(caller + " should have vectors of exact same type");
     }
+  }
+
+  public void loadValidityBuffer(final ArrowFieldNode fieldNode, ArrowBuf bitBuffer) {
+    validityBuffer.getReferenceManager().release();
+    validityBuffer = bitBuffer.getReferenceManager().retain(bitBuffer, allocator);
   }
 
   protected ArrowBuf releaseBuffer(ArrowBuf buffer) {
