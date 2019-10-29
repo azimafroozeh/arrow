@@ -170,6 +170,10 @@ public abstract class BaseValueVector implements ValueVector {
     return validityBuffer;
   }
 
+  public void transferValidityBuffer(BaseValueVector target) {
+    target.validityBuffer = transferBuffer(validityBuffer, target.allocator);
+  }
+
   /* reallocate the validity buffer */
   protected void reallocValidityBuffer() {
     final int currentBufferCapacity = validityBuffer.capacity();

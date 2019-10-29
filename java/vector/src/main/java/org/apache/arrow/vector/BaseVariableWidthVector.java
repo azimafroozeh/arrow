@@ -656,7 +656,7 @@ public abstract class BaseVariableWidthVector extends BaseValueVector
   public void transferTo(BaseVariableWidthVector target) {
     compareTypes(target, "transferTo");
     target.clear();
-    target.validityBuffer = transferBuffer(validityBuffer, target.allocator);
+    transferValidityBuffer(target);
     target.valueBuffer = transferBuffer(valueBuffer, target.allocator);
     target.offsetBuffer = transferBuffer(offsetBuffer, target.allocator);
     target.setLastSet(this.lastSet);

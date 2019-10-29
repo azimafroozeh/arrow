@@ -530,7 +530,7 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
   public void transferTo(BaseFixedWidthVector target) {
     compareTypes(target, "transferTo");
     target.clear();
-    target.validityBuffer = transferBuffer(validityBuffer, target.allocator);
+    transferValidityBuffer(target);
     target.valueBuffer = transferBuffer(valueBuffer, target.allocator);
     target.valueCount = valueCount;
     clear();

@@ -422,7 +422,7 @@ public class ListVector extends BaseRepeatedValueVector implements PromotableVec
     public void transfer() {
       to.clear();
       dataTransferPair.transfer();
-      to.validityBuffer = transferBuffer(validityBuffer, to.allocator);
+      transferValidityBuffer(to);
       to.offsetBuffer = transferBuffer(offsetBuffer, to.allocator);
       to.lastSet = lastSet;
       if (valueCount > 0) {
