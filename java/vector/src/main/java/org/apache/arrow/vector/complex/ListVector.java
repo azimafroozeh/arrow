@@ -125,7 +125,7 @@ public class ListVector extends BaseRepeatedValueVector implements PromotableVec
 
   @Override
   public void setInitialCapacity(int numRecords) {
-    validityAllocationSizeInBytes = getValidityBufferSizeFromCount(numRecords);
+    setValidityAllocationSizeInBytes(getValidityBufferSizeFromCount(numRecords));
     super.setInitialCapacity(numRecords);
   }
 
@@ -521,14 +521,14 @@ public class ListVector extends BaseRepeatedValueVector implements PromotableVec
   @Override
   public void clear() {
     super.clear();
-    validityBuffer = releaseBuffer(validityBuffer);
+    releaseValidityBuffer();
     lastSet = -1;
   }
 
   @Override
   public void reset() {
     super.reset();
-    validityBuffer.setZero(0, validityBuffer.capacity());
+    initValidityBuffer();
     lastSet = -1;
   }
 
@@ -552,7 +552,7 @@ public class ListVector extends BaseRepeatedValueVector implements PromotableVec
     } else {
       List<ArrowBuf> list = new ArrayList<>();
       list.add(offsetBuffer);
-      list.add(validityBuffer);
+      add(list);
       list.addAll(Arrays.asList(vector.getBuffers(false)));
       buffers = list.toArray(new ArrowBuf[list.size()]);
     }

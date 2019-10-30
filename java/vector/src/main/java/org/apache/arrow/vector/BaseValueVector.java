@@ -160,6 +160,10 @@ public abstract class BaseValueVector implements ValueVector {
     validityBuffer.setByte(byteIndex, bitMask);
   }
 
+  public void setValidityAllocationSizeInBytes(int size) {
+    this.validityAllocationSizeInBytes = size;
+  }
+
 
   /**
    * During splitAndTransfer, if we splitting from a random position within a byte,
@@ -303,6 +307,10 @@ public abstract class BaseValueVector implements ValueVector {
     return (b >> bitIndex) & 0x01;
   }
 
+  public void releaseValidityBuffer() {
+    validityBuffer = releaseBuffer(validityBuffer);
+  }
+
 
   /* reallocate the validity buffer */
   protected void reallocValidityBuffer() {
@@ -341,6 +349,8 @@ public abstract class BaseValueVector implements ValueVector {
     buffer = allocator.getEmpty();
     return buffer;
   }
+
+
 
   /* number of bytes for the validity buffer for the given valueCount */
   protected static int getValidityBufferSizeFromCount(final int valueCount) {
