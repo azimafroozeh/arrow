@@ -626,16 +626,6 @@ public class ListVector extends BaseRepeatedValueVector implements PromotableVec
   }
 
   /**
-   * Get the number of elements that are null in the vector.
-   *
-   * @return the number of null elements.
-   */
-  @Override
-  public int getNullCount() {
-    return BitVectorHelper.getNullCount(validityBuffer, valueCount);
-  }
-
-  /**
    * Get the current value capacity for the vector.
    * @return number of elements that vector can hold.
    */

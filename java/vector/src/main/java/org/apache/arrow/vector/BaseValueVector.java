@@ -136,8 +136,9 @@ public abstract class BaseValueVector implements ValueVector {
     validityBuffer.writerIndex(index);
   }
 
-  public int getNullCount(int valueCount) {
-    return BitVectorHelper.getNullCount(validityBuffer, valueCount);
+  @Override
+  public int getNullCount() {
+    return BitVectorHelper.getNullCount(validityBuffer, getValueCount());
   }
 
   public void markValidityBitToOne(int index) {

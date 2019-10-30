@@ -559,16 +559,6 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
 
 
   /**
-   * Get the number of elements that are null in the vector.
-   *
-   * @return the number of null elements.
-   */
-  @Override
-  public int getNullCount() {
-    return BitVectorHelper.getNullCount(validityBuffer, valueCount);
-  }
-
-  /**
    * Get the value count of vector. This will always be zero unless
    * {@link #setValueCount(int)} has been called prior to calling this.
    *

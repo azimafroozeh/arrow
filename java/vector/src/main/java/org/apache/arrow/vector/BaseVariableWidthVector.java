@@ -705,16 +705,6 @@ public abstract class BaseVariableWidthVector extends BaseValueVector
    |                                                                |
    *----------------------------------------------------------------*/
 
-
-  /**
-   * Get the number of elements that are null in the vector.
-   *
-   * @return the number of null elements.
-   */
-  public int getNullCount() {
-    return BitVectorHelper.getNullCount(validityBuffer, valueCount);
-  }
-
   /**
    * Check if the given index is within the current value capacity
    * of the vector.
