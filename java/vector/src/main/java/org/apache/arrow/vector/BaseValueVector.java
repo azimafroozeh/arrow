@@ -136,6 +136,30 @@ public abstract class BaseValueVector implements ValueVector {
     validityBuffer.writerIndex(index);
   }
 
+  public int getNullCount(int valueCount) {
+    return BitVectorHelper.getNullCount(validityBuffer, valueCount);
+  }
+
+  public void markValidityBitToOne(int index) {
+    BitVectorHelper.setValidityBitToOne(validityBuffer, index);
+  }
+
+  public void markValidityBitToZero(int index) {
+    BitVectorHelper.setValidityBit(validityBuffer, index, 0);
+  }
+
+  public void setValidityBit(int index, int value) {
+    BitVectorHelper.setValidityBit(validityBuffer, index, value);
+  }
+
+  void setBitMaskedByte(int byteIndex, byte bitMask) {
+    BitVectorHelper.setBitMaskedByte(validityBuffer, byteIndex, bitMask);
+  }
+
+  void setValidityBufferByte(int byteIndex, int bitMask) {
+    validityBuffer.setByte(byteIndex, bitMask);
+  }
+
 
   /**
    * During splitAndTransfer, if we splitting from a random position within a byte,
@@ -253,6 +277,30 @@ public abstract class BaseValueVector implements ValueVector {
         }
       }
     }
+  }
+
+  /**
+   * Check if element at given index is null.
+   *
+   * @param index  position of element
+   * @return true if element at given index is null, false otherwise
+   */
+  @Override
+  public boolean isNull(int index) {
+    return (isSet(index) == 0);
+  }
+
+  /**
+   * Same as {@link #isNull(int)}.
+   *
+   * @param index  position of element
+   * @return 1 if element at given index is not null, 0 otherwise
+   */
+  public int isSet(int index) {
+    final int byteIndex = index >> 3;
+    final byte b = validityBuffer.getByte(byteIndex);
+    final int bitIndex = index & 7;
+    return (b >> bitIndex) & 0x01;
   }
 
 
