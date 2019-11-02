@@ -81,7 +81,7 @@ public class ListSubfieldEncoder {
     BaseListVector encoded = cloneVector(vector);
     encoded.initializeChildrenFromFields(Collections.singletonList(valueField));
     BaseIntVector indices = (BaseIntVector) getDataVector(encoded);
-
+    indices.setValueCount(encoded.getValueCount());
     ValueVector dataVector = getDataVector(vector);
     for (int i = 0; i < valueCount; i++) {
       if (!vector.isNull(i)) {
@@ -113,7 +113,7 @@ public class ListSubfieldEncoder {
 
     // get data vector
     ValueVector dataVector = getDataVector(decoded);
-
+    dataVector.setValueCount(decoded.getValueCount());
     TransferPair transfer = getDataVector(dictionaryVector).makeTransferPair(dataVector);
     BaseIntVector indices = (BaseIntVector) getDataVector(vector);
 

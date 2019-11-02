@@ -298,6 +298,7 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
       clear();
       throw e;
     }
+    this.valueCount = valueCount;
   }
 
   /*
@@ -767,6 +768,9 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
    * @return 1 if element at given index is not null, 0 otherwise
    */
   public int isSet(int index) {
+    if (valueCount == 0) {
+      return 0;
+    }
     final int byteIndex = index >> 3;
     final byte b = validityBuffer.getByte(byteIndex);
     final int bitIndex = index & 7;

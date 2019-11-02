@@ -86,8 +86,6 @@ public class TestVectorSchemaRoot {
   }
 
   private void checkCount(BitVector vec1, IntVector vec2, VectorSchemaRoot vsr, int count) {
-    assertEquals(vec1.getValueCount(), count);
-    assertEquals(vec2.getValueCount(), count);
     assertEquals(vsr.getRowCount(), count);
   }
 
