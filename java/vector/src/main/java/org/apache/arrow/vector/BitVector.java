@@ -323,7 +323,7 @@ public final class BitVector extends BaseFixedWidthVector {
    * @param value value of element
    */
   public void set(int index, int value) {
-    BitVectorHelper.setValidityBitToOne(validityBuffer, index);
+    markValidityBitToOne(index);
     if (value != 0) {
       BitVectorHelper.setValidityBitToOne(valueBuffer, index);
     } else {

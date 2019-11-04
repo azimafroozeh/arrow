@@ -312,6 +312,9 @@ public abstract class BaseValueVector implements ValueVector {
     validityBuffer = releaseBuffer(validityBuffer);
   }
 
+  public int getValidityBufferValueCapacity() {
+    return validityBuffer.capacity() * 8;
+  }
 
   /* reallocate the validity buffer */
   protected void reallocValidityBuffer() {
