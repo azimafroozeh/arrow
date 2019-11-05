@@ -76,7 +76,6 @@ public class TestCopyFrom {
             newVector(VarCharVector.class, EMPTY_SCHEMA_PATH, MinorType.VARCHAR, allocator)) {
       vector.allocateNew();
       assertTrue(vector.getValueCapacity() >= 1);
-      assertEquals(0, vector.getValueCount());
       int initialCapacity = vector.getValueCapacity();
 
       for (int i = 0; i < initialCapacity; i++) {
@@ -148,7 +147,6 @@ public class TestCopyFrom {
             newVector(VarCharVector.class, EMPTY_SCHEMA_PATH, MinorType.VARCHAR, allocator)) {
       vector.allocateNew();
       assertTrue(vector.getValueCapacity() >= 1);
-      assertEquals(0, vector.getValueCount());
       int initialCapacity = vector.getValueCapacity();
 
       for (int i = 0; i < initialCapacity; i++) {

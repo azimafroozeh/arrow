@@ -407,6 +407,7 @@ public abstract class BaseVariableWidthVector extends BaseValueVector
       clear();
       throw e;
     }
+    this.valueCount = valueCount;
   }
 
   @Override
@@ -842,6 +843,9 @@ public abstract class BaseVariableWidthVector extends BaseValueVector
    * @return 1 if element at given index is not null, 0 otherwise
    */
   public int isSet(int index) {
+    if (valueCount == 0) {
+      return 0;
+    }
     final int byteIndex = index >> 3;
     final byte b = validityBuffer.getByte(byteIndex);
     final int bitIndex = index & 7;
