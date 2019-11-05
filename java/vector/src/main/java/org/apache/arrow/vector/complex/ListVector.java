@@ -154,7 +154,7 @@ public class ListVector extends BaseRepeatedValueVector implements PromotableVec
    */
   @Override
   public void setInitialCapacity(int numRecords, double density) {
-    validityAllocationSizeInBytes = getValidityBufferSizeFromCount(numRecords);
+    setValidityAllocationSizeInBytes(getValidityBufferSizeFromCount(numRecords));
     super.setInitialCapacity(numRecords, density);
   }
 
@@ -198,7 +198,7 @@ public class ListVector extends BaseRepeatedValueVector implements PromotableVec
     offsetBuffer.getReferenceManager().release();
     offsetBuffer = offBuffer.getReferenceManager().retain(offBuffer, allocator);
 
-    validityAllocationSizeInBytes = validityBuffer.capacity();
+    setValidityAllocationSizeInBytes(getValidityBufferCapacity());
     offsetAllocationSizeInBytes = offsetBuffer.capacity();
 
     lastSet = fieldNode.getLength() - 1;
@@ -267,7 +267,7 @@ public class ListVector extends BaseRepeatedValueVector implements PromotableVec
       /* we are doing a new allocation -- release the current buffers */
       clear();
       /* allocate validity buffer */
-      allocateValidityBuffer(validityAllocationSizeInBytes);
+      allocateValidityBuffer(getValidityAllocationSizeInBytes());
       /* allocate offset and data buffer */
       success = super.allocateNewSafe();
     } finally {
@@ -612,18 +612,6 @@ public class ListVector extends BaseRepeatedValueVector implements PromotableVec
     return (isSet(index) == 0);
   }
 
-  /**
-   * Same as {@link #isNull(int)}.
-   *
-   * @param index  position of element
-   * @return 1 if element at given index is not null, 0 otherwise
-   */
-  public int isSet(int index) {
-    final int byteIndex = index >> 3;
-    final byte b = validityBuffer.getByte(byteIndex);
-    final int bitIndex = index & 7;
-    return (b >> bitIndex) & 0x01;
-  }
 
   /**
    * Get the current value capacity for the vector.
@@ -637,10 +625,6 @@ public class ListVector extends BaseRepeatedValueVector implements PromotableVec
   private int getValidityAndOffsetValueCapacity() {
     final int offsetValueCapacity = Math.max(getOffsetBufferValueCapacity() - 1, 0);
     return Math.min(offsetValueCapacity, getValidityBufferValueCapacity());
-  }
-
-  private int getValidityBufferValueCapacity() {
-    return validityBuffer.capacity() * 8;
   }
 
   /**
