@@ -2650,14 +2650,14 @@ public class TestValueVector {
 
       // validate intVector toString
       assertEquals("[]", intVector.toString());
-      intVector.setValueCount(3);
+      intVector.allocateNew(3);
       intVector.setSafe(0, 1);
       intVector.setSafe(1, 2);
       intVector.setSafe(2, 3);
       assertEquals("[1, 2, 3]", intVector.toString());
 
       // validate intVector with plenty values
-      intVector.setValueCount(100);
+      intVector.allocateNew(100);
       for (int i = 0; i < 100; i++) {
         intVector.setSafe(i, i);
       }

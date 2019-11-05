@@ -265,6 +265,7 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
       throw e;
     }
     this.valueCount = valueCount;
+    setNullCount(valueCount);
   }
 
   /*
@@ -392,6 +393,8 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
     reallocValidityBuffer(newValidityBuffer);
 
     lastValueCapacity = getValueCapacity();
+    this.valueCount = targetValueCount;
+    setNullCount(getNullCount() + valueCount);
   }
 
   @Override
@@ -520,6 +523,7 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
     transferValidityBuffer(target);
     target.valueBuffer = transferBuffer(valueBuffer, target.allocator);
     target.valueCount = valueCount;
+    target.setNullCount(getNullCount());
     clear();
   }
 
@@ -717,6 +721,9 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
     // not really needed to set the bit to 0 as long as
     // the buffer always starts from 0.
     markValidityBitToZero(index);
+    if (isSet(index) == 1) {
+      ++nullCount;
+    }
   }
 
   @Override

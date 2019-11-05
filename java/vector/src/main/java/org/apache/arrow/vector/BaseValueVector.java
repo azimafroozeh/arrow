@@ -56,11 +56,13 @@ public abstract class BaseValueVector implements ValueVector {
   protected final BufferAllocator allocator;
   protected ArrowBuf validityBuffer;
   protected int validityAllocationSizeInBytes;
+  protected int nullCount;
 
   protected BaseValueVector(BufferAllocator allocator) {
     this.validityBuffer = allocator.getEmpty();
     this.allocator = Preconditions.checkNotNull(allocator, "allocator cannot be null");
     this.validityAllocationSizeInBytes = getValidityBufferSizeFromCount(INITIAL_VALUE_ALLOCATION);
+    this.nullCount = -1;
   }
 
   @Override
@@ -292,6 +294,12 @@ public abstract class BaseValueVector implements ValueVector {
    */
   @Override
   public boolean isNull(int index) {
+    if (getValueCount() == 0) {
+      return true;
+    }
+    if (nullCount == 0) {
+      return false;
+    }
     return (isSet(index) == 0);
   }
 
@@ -302,9 +310,6 @@ public abstract class BaseValueVector implements ValueVector {
    * @return 1 if element at given index is not null, 0 otherwise
    */
   public int isSet(int index) {
-    if (getValueCount() == 0) {
-      return 0;
-    }
     final int byteIndex = index >> 3;
     final byte b = validityBuffer.getByte(byteIndex);
     final int bitIndex = index & 7;
@@ -329,6 +334,14 @@ public abstract class BaseValueVector implements ValueVector {
 
   public int  getValidityAllocationSizeInBytes() {
     return validityAllocationSizeInBytes;
+  }
+
+  public void setNullCount(int nullCount) {
+    this.nullCount = nullCount;
+  }
+
+  public int getNullCount(int nullCount) {
+    return this.nullCount;
   }
 
 
