@@ -374,6 +374,7 @@ public abstract class BaseVariableWidthVector extends BaseValueVector
       clear();
       throw e;
     }
+    this.valueCount = valueCount;
   }
 
   @Override

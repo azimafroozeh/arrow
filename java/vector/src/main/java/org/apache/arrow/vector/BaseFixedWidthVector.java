@@ -264,6 +264,7 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
       clear();
       throw e;
     }
+    this.valueCount = valueCount;
   }
 
   /*

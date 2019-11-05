@@ -302,6 +302,9 @@ public abstract class BaseValueVector implements ValueVector {
    * @return 1 if element at given index is not null, 0 otherwise
    */
   public int isSet(int index) {
+    if (getValueCount() == 0) {
+      return 0;
+    }
     final int byteIndex = index >> 3;
     final byte b = validityBuffer.getByte(byteIndex);
     final int bitIndex = index & 7;
