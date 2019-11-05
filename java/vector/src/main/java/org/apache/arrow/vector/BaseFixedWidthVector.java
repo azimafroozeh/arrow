@@ -53,6 +53,7 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
   protected ArrowBuf validityBuffer;
   protected ArrowBuf valueBuffer;
   protected int valueCount;
+  protected int nullCount;
 
   /**
    * Constructs a new instance.
@@ -67,6 +68,7 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
     this.field = field;
     valueCount = 0;
     allocationMonitor = 0;
+    nullCount = 0;
     validityBuffer = allocator.getEmpty();
     valueBuffer = allocator.getEmpty();
     lastValueCapacity = INITIAL_VALUE_ALLOCATION;
@@ -299,6 +301,7 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
       throw e;
     }
     this.valueCount = valueCount;
+    this.nullCount = valueCount;
   }
 
   /*
@@ -440,6 +443,8 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
     validityBuffer = newValidityBuffer;
 
     lastValueCapacity = getValueCapacity();
+    this.valueCount = targetValueCount;
+    this.nullCount = nullCount + valueCount;
   }
 
   @Override
@@ -492,6 +497,7 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
     valueBuffer = dataBuffer.getReferenceManager().retain(dataBuffer, allocator);
 
     valueCount = fieldNode.getLength();
+    nullCount = fieldNode.getNullCount();
   }
 
   /**
@@ -569,6 +575,7 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
     target.validityBuffer = transferBuffer(validityBuffer, target.allocator);
     target.valueBuffer = transferBuffer(valueBuffer, target.allocator);
     target.valueCount = valueCount;
+    target.nullCount = nullCount;
     clear();
   }
 
@@ -758,6 +765,12 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
    */
   @Override
   public boolean isNull(int index) {
+    if (valueCount == 0) {
+      return true;
+    }
+    if (nullCount == 0) {
+      return false;
+    }
     return (isSet(index) == 0);
   }
 
@@ -768,9 +781,6 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
    * @return 1 if element at given index is not null, 0 otherwise
    */
   public int isSet(int index) {
-    if (valueCount == 0) {
-      return 0;
-    }
     final int byteIndex = index >> 3;
     final byte b = validityBuffer.getByte(byteIndex);
     final int bitIndex = index & 7;
@@ -865,6 +875,9 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
     // not really needed to set the bit to 0 as long as
     // the buffer always starts from 0.
     BitVectorHelper.setValidityBit(validityBuffer, index, 0);
+    if (isSet(index) == 1) {
+      ++nullCount;
+    }
   }
 
   @Override

@@ -224,8 +224,8 @@ public class TestVectorSchemaRoot {
   public void testSliceWithInvalidParam() {
     try (final IntVector intVector = new IntVector("intVector", allocator);
          final Float4Vector float4Vector = new Float4Vector("float4Vector", allocator)) {
-      intVector.setValueCount(10);
-      float4Vector.setValueCount(10);
+      intVector.allocateNew(10);
+      float4Vector.allocateNew(10);
       for (int i = 0; i < 10; i++) {
         intVector.setSafe(i, i);
         float4Vector.setSafe(i, i + 0.1f);

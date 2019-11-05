@@ -167,6 +167,9 @@ public final class IntVector extends BaseFixedWidthVector implements BaseIntVect
   public void set(int index, int value) {
     BitVectorHelper.setValidityBitToOne(validityBuffer, index);
     setValue(index, value);
+    if (isSet(index) == 0) {
+      --nullCount;
+    }
   }
 
   /**

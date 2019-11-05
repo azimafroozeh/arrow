@@ -978,7 +978,6 @@ public class TestValueVector {
       /* use the default capacity; 4096*8 => 32KB */
       vector.setInitialCapacity(initialCapacity);
       vector.allocateNew();
-
       assertTrue(vector.getValueCapacity() >= initialCapacity);
       initialCapacity = vector.getValueCapacity();
 
@@ -1011,7 +1010,6 @@ public class TestValueVector {
         double value = vector.get(i);
         assertEquals(baseValue + (double)i, value, 0);
       }
-
       /* this should trigger a realloc */
       vector.setSafe(capacityAfterRealloc1, baseValue + (double)(capacityAfterRealloc1));
       assertTrue(vector.getValueCapacity() >= initialCapacity * 4);
@@ -1038,7 +1036,6 @@ public class TestValueVector {
       /* now let's realloc the toVector */
       toVector.reAlloc();
       assertTrue(toVector.getValueCapacity() >= initialCapacity * 8);
-
       for (int i = 0; i < toVector.getValueCapacity(); i++) {
         if (i < capacityAfterRealloc2) {
           assertEquals(baseValue + (double)i, toVector.get(i), 0);
@@ -2650,14 +2647,14 @@ public class TestValueVector {
 
       // validate intVector toString
       assertEquals("[]", intVector.toString());
-      intVector.setValueCount(3);
+      intVector.allocateNew(3);
       intVector.setSafe(0, 1);
       intVector.setSafe(1, 2);
       intVector.setSafe(2, 3);
       assertEquals("[1, 2, 3]", intVector.toString());
 
       // validate intVector with plenty values
-      intVector.setValueCount(100);
+      intVector.allocateNew(100);
       for (int i = 0; i < 100; i++) {
         intVector.setSafe(i, i);
       }
