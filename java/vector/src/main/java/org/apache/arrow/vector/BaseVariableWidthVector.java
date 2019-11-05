@@ -843,8 +843,8 @@ public abstract class BaseVariableWidthVector extends BaseValueVector
    * @return 1 if element at given index is not null, 0 otherwise
    */
   public int isSet(int index) {
-    if (valueCount == 0) {
-      return 0;
+    if (getNullCount() == 0 && getValueCount() != 0 && index < getValueCount()) {
+      return 1;
     }
     final int byteIndex = index >> 3;
     final byte b = validityBuffer.getByte(byteIndex);
