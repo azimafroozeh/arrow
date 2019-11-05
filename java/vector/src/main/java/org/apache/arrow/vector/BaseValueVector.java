@@ -316,6 +316,19 @@ public abstract class BaseValueVector implements ValueVector {
     return validityBuffer.capacity() * 8;
   }
 
+  public void setReaderIndex(int index) {
+    validityBuffer.readerIndex(index);
+  }
+
+  public void setWriterIndex(int index) {
+    validityBuffer.writerIndex(index);
+  }
+
+  public int  getValidityAllocationSizeInBytes() {
+    return validityAllocationSizeInBytes;
+  }
+
+
   /* reallocate the validity buffer */
   protected void reallocValidityBuffer() {
     final int currentBufferCapacity = validityBuffer.capacity();
