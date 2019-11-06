@@ -294,9 +294,6 @@ public abstract class BaseValueVector implements ValueVector {
    */
   @Override
   public boolean isNull(int index) {
-    if (nullCount == 0) {
-      return false;
-    }
     return (isSet(index) == 0);
   }
 

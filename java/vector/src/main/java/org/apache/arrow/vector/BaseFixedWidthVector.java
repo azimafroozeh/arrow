@@ -446,6 +446,7 @@ public abstract class BaseFixedWidthVector extends BaseValueVector
     valueBuffer = dataBuffer.getReferenceManager().retain(dataBuffer, allocator);
 
     valueCount = fieldNode.getLength();
+    setNullCount(fieldNode.getNullCount());
   }
 
   /**

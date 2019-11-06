@@ -289,6 +289,7 @@ public abstract class BaseVariableWidthVector extends BaseValueVector
 
     lastSet = fieldNode.getLength() - 1;
     valueCount = fieldNode.getLength();
+    setNullCount(fieldNode.getNullCount());
   }
 
   /**
