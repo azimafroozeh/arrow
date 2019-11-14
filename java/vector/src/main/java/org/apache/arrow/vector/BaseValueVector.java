@@ -56,11 +56,18 @@ public abstract class BaseValueVector implements ValueVector {
   protected final BufferAllocator allocator;
   protected ArrowBuf validityBuffer;
   protected int validityAllocationSizeInBytes;
+  protected int nullCount;
 
+  /**
+   * Constructs a new instance.
+   *
+   * @param allocator allocator for memory management.
+   */
   protected BaseValueVector(BufferAllocator allocator) {
     this.validityBuffer = allocator.getEmpty();
     this.allocator = Preconditions.checkNotNull(allocator, "allocator cannot be null");
     this.validityAllocationSizeInBytes = getValidityBufferSizeFromCount(INITIAL_VALUE_ALLOCATION);
+    this.nullCount = -1;
   }
 
   @Override
@@ -119,9 +126,18 @@ public abstract class BaseValueVector implements ValueVector {
     }
   }
 
+
+  /**
+   * Load the validityBuffer this vector with provided source buffer.
+   * The caller manages the source buffers and populates them before invoking
+   * this method.
+   *
+   * @param fieldNode  the fieldNode indicating the value count
+   */
   public void loadValidityBuffer(final ArrowFieldNode fieldNode, ArrowBuf bitBuffer) {
     validityBuffer.getReferenceManager().release();
     validityBuffer = bitBuffer.getReferenceManager().retain(bitBuffer, allocator);
+    this.nullCount = fieldNode.getNullCount();
   }
 
   public void add(List<ArrowBuf> list) {
@@ -302,6 +318,9 @@ public abstract class BaseValueVector implements ValueVector {
    * @return 1 if element at given index is not null, 0 otherwise
    */
   public int isSet(int index) {
+    if (nullCount == 0 && index < getValueCount()) {
+      return 1;
+    }
     final int byteIndex = index >> 3;
     final byte b = validityBuffer.getByte(byteIndex);
     final int bitIndex = index & 7;
